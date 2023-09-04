@@ -30,7 +30,7 @@
 
   <!-- common parameters -->
   <arg name="input/pointcloud" default="/sensing/lidar/concatenated/pointcloud" description="The topic will be used in the detection module"/>
-  <arg name="mode" default="camera_lidar_fusion" description="options: `camera_lidar_radar_fusion`, `camera_lidar_fusion`, `lidar_radar_fusion`, `lidar` or `radar`"/>
+  <arg name="mode" default="lidar" description="options: `camera_lidar_radar_fusion`, `camera_lidar_fusion`, `lidar_radar_fusion`, `lidar` or `radar`"/>
   <arg name="lidar_detection_model" default="centerpoint" description="options: `centerpoint`, `apollo`, `pointpainting`, `clustering`"/>
   <arg name="image_raw0" default="/sensing/camera/camera0/image_rect_color" description="image raw topic name"/>
   <arg name="camera_info0" default="/sensing/camera/camera0/camera_info" description="camera info topic name"/>
@@ -71,8 +71,8 @@
   <arg name="objects_filter_method" default="lanelet_filter"/>
   <arg name="objects_validation_method" default="obstacle_pointcloud"/>
   <!-- Traffic Light Recognition Parameters -->
-  <arg name="use_traffic_light_recognition" default="true"/>
-  <arg name="traffic_light_recognition/enable_fine_detection" default="true"/>
+  <arg name="use_traffic_light_recognition" default="false"/>
+  <arg name="traffic_light_recognition/enable_fine_detection" default="false"/>
   <arg name="traffic_light_recognition/fusion_only" default="false"/>
   <arg name="traffic_light_image_number" default="1" description="choose traffic light image raw number(1-2)"/>
   <arg
@@ -93,8 +93,8 @@
   <arg name="trust_distance" default="30.0"/>
 
   <!-- perception module -->
-  <group>
-    <push-ros-namespace namespace="perception"/>
+   <group>
+    <push-ros-namespace namespace="perception"/> 
 
     <!-- object segmentation module -->
     <group>
@@ -110,7 +110,7 @@
     </group>
 
     <!-- occupancy grid map module -->
-    <group>
+   <group>
       <push-ros-namespace namespace="occupancy_grid_map"/>
       <include file="$(find-pkg-share tier4_perception_launch)/launch/occupancy_grid_map/probabilistic_occupancy_grid_map.launch.xml">
         <arg name="input/obstacle_pointcloud" value="/perception/obstacle_segmentation/single_frame/pointcloud_raw"/>
@@ -126,11 +126,11 @@
         <arg name="occupancy_grid_map_updater_param_path" value="$(var occupancy_grid_map_updater_param_path)"/>
       </include>
     </group>
-
+     
     <!-- object recognition module -->
     <group unless="$(var use_empty_dynamic_object_publisher)">
       <push-ros-namespace namespace="object_recognition"/>
-      <!-- detection module -->
+    <!-- detection module -->
       <group>
         <push-ros-namespace namespace="detection"/>
         <include file="$(find-pkg-share tier4_perception_launch)/launch/object_recognition/detection/detection.launch.xml">
@@ -170,7 +170,7 @@
           <arg name="trust_distance" value="$(var trust_distance)"/>
         </include>
       </group>
-
+       
       <!-- tracking module -->
       <group>
         <push-ros-namespace namespace="tracking"/>

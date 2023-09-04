@@ -43,7 +43,7 @@ def launch_setup(context, *args, **kwargs):
                 {
                     "input_topics": LaunchConfiguration("input_points_raw_list"),
                     "output_frame": LaunchConfiguration("tf_output_frame"),
-                    "approximate_sync": True,
+                    "approximate_sync": False,
                     "publish_synchronized_pointcloud": False,
                 }
             ],
@@ -59,7 +59,7 @@ def launch_setup(context, *args, **kwargs):
                 {
                     "input_topics": LaunchConfiguration("input_points_raw_list"),
                     "output_frame": LaunchConfiguration("tf_output_frame"),
-                    "approximate_sync": True,
+                    "approximate_sync": False,
                 }
             ],
         )
@@ -73,7 +73,7 @@ def launch_setup(context, *args, **kwargs):
                 {
                     "input_topics": LaunchConfiguration("input_points_raw_list"),
                     "output_frame": LaunchConfiguration("tf_output_frame"),
-                    "approximate_sync": True,
+                    "approximate_sync": False,
                 }
             ],
         )
@@ -103,13 +103,13 @@ def launch_setup(context, *args, **kwargs):
             {
                 "input_frame": LaunchConfiguration("tf_output_frame"),
                 "output_frame": LaunchConfiguration("tf_output_frame"),
-                "min_x": -200.0,
-                "max_x": 1000.0,
-                "min_y": -50.0,
-                "max_y": 50.0,
+                "min_x": -1.5,
+                "max_x": 3.5,
+                "min_y": -1.0,
+                "max_y": 1.0,
                 "min_z": -2.0,
-                "max_z": 3.0,
-                "negative": False,
+                "max_z": 2.0,
+                "negative": True,
             }
         ],
     )
