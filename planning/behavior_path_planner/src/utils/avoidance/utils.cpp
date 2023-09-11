@@ -17,10 +17,14 @@
 #include "behavior_path_planner/utils/avoidance/avoidance_module_data.hpp"
 #include "behavior_path_planner/utils/avoidance/utils.hpp"
 #include "behavior_path_planner/utils/path_utils.hpp"
+#include "motion_utils/trajectory/path_with_lane_id.hpp"
+#include "tier4_autoware_utils/geometry/boost_polygon_utils.hpp"
 
 #include <autoware_auto_tf2/tf2_autoware_auto_msgs.hpp>
 #include <lanelet2_extension/utility/utilities.hpp>
-#include <tier4_autoware_utils/tier4_autoware_utils.hpp>
+#include <motion_utils/trajectory/interpolation.hpp>
+#include <tier4_autoware_utils/geometry/geometry.hpp>
+#include <tier4_autoware_utils/ros/uuid_helper.hpp>
 
 #include <tier4_planning_msgs/msg/avoidance_debug_factor.hpp>
 
@@ -396,7 +400,8 @@ void fillLongitudinalAndLengthByClosestEnvelopeFootprint(
   double max_distance = std::numeric_limits<double>::lowest();
   for (const auto & p : obj.envelope_poly.outer()) {
     const auto point = tier4_autoware_utils::createPoint(p.x(), p.y(), 0.0);
-    const double arc_length = calcSignedArcLengthToFirstNearestPoint(path.points, ego_pos, point);
+    // TODO(someone): search around first position where the ego should avoid the object.
+    const double arc_length = calcSignedArcLength(path.points, ego_pos, point);
     min_distance = std::min(min_distance, arc_length);
     max_distance = std::max(max_distance, arc_length);
   }
@@ -412,7 +417,8 @@ double calcEnvelopeOverhangDistance(
 
   for (const auto & p : object_data.envelope_poly.outer()) {
     const auto point = tier4_autoware_utils::createPoint(p.x(), p.y(), 0.0);
-    const auto idx = findFirstNearestIndex(path.points, point);
+    // TODO(someone): search around first position where the ego should avoid the object.
+    const auto idx = findNearestIndex(path.points, point);
     const auto lateral = calcLateralDeviation(getPose(path.points.at(idx)), point);
 
     const auto & overhang_pose_on_right = [&overhang_pose, &largest_overhang, &point, &lateral]() {
