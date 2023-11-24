@@ -14,9 +14,9 @@
 
 #include "behavior_path_planner/utils/goal_planner/shift_pull_over.hpp"
 
+#include "behavior_path_planner/utils/drivable_area_expansion/static_drivable_area.hpp"
 #include "behavior_path_planner/utils/goal_planner/util.hpp"
 #include "behavior_path_planner/utils/path_utils.hpp"
-#include "motion_utils/trajectory/path_with_lane_id.hpp"
 
 #include <lanelet2_extension/utility/query.hpp>
 #include <lanelet2_extension/utility/utilities.hpp>
@@ -111,7 +111,7 @@ boost::optional<PullOverPath> ShiftPullOver::generatePullOverPath(
 
   // generate road lane reference path to shift end
   const auto road_lane_reference_path_to_shift_end = utils::resamplePathWithSpline(
-    generateReferencePath(road_lanes, shift_end_pose), resample_interval_);
+    generateReferencePath(road_lanes, shift_end_pose), parameters_.center_line_path_interval);
 
   // calculate shift length
   const Pose & shift_end_pose_road_lane =
