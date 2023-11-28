@@ -73,16 +73,9 @@
   <arg name="pointcloud_container_name" default="pointcloud_container"/>
   <arg name="objects_filter_method" default="lanelet_filter"/>
   <arg name="objects_validation_method" default="obstacle_pointcloud"/>
-<<<<<<< HEAD
   <!-- Traffic Light Recognition Parameters -->
   <arg name="use_traffic_light_recognition" default="false"/>
   <arg name="traffic_light_recognition/enable_fine_detection" default="false"/>
-=======
-
-  <!-- Traffic light recognition parameters -->
-  <arg name="use_traffic_light_recognition" default="true"/>
-  <arg name="traffic_light_recognition/enable_fine_detection" default="true"/>
->>>>>>> upstream/main
   <arg name="traffic_light_recognition/fusion_only" default="false"/>
   <arg name="traffic_light_image_number" default="1" description="choose traffic light image raw number(1-2)"/>
   <arg
@@ -106,11 +99,6 @@
   <!-- Whether to use detection by tracker -->
   <arg name="use_detection_by_tracker" default="true"/>
 
-<<<<<<< HEAD
-  <!-- perception module -->
-   <group>
-    <push-ros-namespace namespace="perception"/> 
-=======
   <!-- Radar long range integration methods -->
   <arg
     name="use_radar_tracking_fusion"
@@ -121,7 +109,6 @@
   <!-- Perception module -->
   <group>
     <push-ros-namespace namespace="perception"/>
->>>>>>> upstream/main
 
     <!-- Object segmentation module -->
     <group>
@@ -136,13 +123,8 @@
       </include>
     </group>
 
-<<<<<<< HEAD
-    <!-- occupancy grid map module -->
-   <group>
-=======
     <!-- Occupancy grid map module -->
     <group>
->>>>>>> upstream/main
       <push-ros-namespace namespace="occupancy_grid_map"/>
       <include file="$(find-pkg-share tier4_perception_launch)/launch/occupancy_grid_map/probabilistic_occupancy_grid_map.launch.xml">
         <arg name="input/obstacle_pointcloud" value="/perception/obstacle_segmentation/single_frame/pointcloud_raw"/>
@@ -158,19 +140,11 @@
         <arg name="occupancy_grid_map_updater_param_path" value="$(var occupancy_grid_map_updater_param_path)"/>
       </include>
     </group>
-<<<<<<< HEAD
-     
-    <!-- object recognition module -->
-    <group unless="$(var use_empty_dynamic_object_publisher)">
-      <push-ros-namespace namespace="object_recognition"/>
-    <!-- detection module -->
-=======
 
     <!-- Object recognition module -->
     <group unless="$(var use_empty_dynamic_object_publisher)">
       <push-ros-namespace namespace="object_recognition"/>
       <!-- Detection module -->
->>>>>>> upstream/main
       <group>
         <push-ros-namespace namespace="detection"/>
         <include file="$(find-pkg-share tier4_perception_launch)/launch/object_recognition/detection/detection.launch.xml">
@@ -214,13 +188,8 @@
           <arg name="use_roi_based_cluster" value="$(var use_roi_based_cluster)"/>
         </include>
       </group>
-<<<<<<< HEAD
-       
-      <!-- tracking module -->
-=======
 
       <!-- Tracking module -->
->>>>>>> upstream/main
       <group>
         <push-ros-namespace namespace="tracking"/>
         <include file="$(find-pkg-share tier4_perception_launch)/launch/object_recognition/tracking/tracking.launch.xml">
