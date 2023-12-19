@@ -155,7 +155,7 @@ def generate_launch_description():
 
     add_launch_arg(
         "input_points_raw_list",
-        ["/points_raw"],
+        ['/lexus3/os_center/points','/lexus3/os_left/points','/lexus3/os_right/points'],
         "Input pointcloud topic_name list as a string_array. "
         "To subscribe multiple topics, write as: \"['/points_raw0', '/points_raw1', ...]\"",
     )
