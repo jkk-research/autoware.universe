@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="duro_localizer" exec="duro_localizer" name="duro_localizer" output="screen" />
+</launch>
