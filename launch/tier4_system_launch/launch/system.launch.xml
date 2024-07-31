@@ -4,6 +4,7 @@
   <arg name="component_state_monitor_topic_path"/>
   <arg name="emergency_handler_param_path"/>
   <arg name="duplicated_node_checker_param_path"/>
+  <arg name="processing_time_checker_param_path"/>
   <arg name="mrm_comfortable_stop_operator_param_path"/>
   <arg name="mrm_emergency_stop_operator_param_path"/>
   <arg name="system_error_monitor_param_path"/>
@@ -24,6 +25,12 @@
   <arg name="launch_dummy_diag_publisher" description="launch dummy diag publisher"/>
   <arg name="run_mode" default="online" description="options: online, logging_simulation, planning_simulation"/>
   <arg name="sensor_model" description="sensor model name"/>
+
+  <!-- Emergency handler will be replaced by MRM handler. -->
+  <arg name="use_emergency_handler" default="false" description="use emergency handler packages"/>
+  <arg name="mrm_handler_param_path"/>
+  <arg name="diagnostic_graph_aggregator_param_path"/>
+  <arg name="diagnostic_graph_aggregator_graph_path"/>
 
   <let name="sensor_launch_pkg" value="$(find-pkg-share $(var sensor_model)_launch)"/>
 
@@ -51,6 +58,20 @@
       </include>
     </group>
 
+    <!-- Duplicated Node Checker -->
+    <group>
+      <include file="$(find-pkg-share duplicated_node_checker)/launch/duplicated_node_checker.launch.xml">
+        <arg name="config_file" value="$(var duplicated_node_checker_param_path)"/>
+      </include>
+    </group>
+
+    <!-- Processing Time Checker -->
+    <group>
+      <include file="$(find-pkg-share autoware_processing_time_checker)/launch/processing_time_checker.launch.xml">
+        <arg name="config_file" value="$(var processing_time_checker_param_path)"/>
+      </include>
+    </group>
+
     <!-- Service Log Checker -->
     <group>
       <include file="$(find-pkg-share component_interface_tools)/launch/service_log_checker.launch.xml"/>
@@ -64,8 +85,20 @@
       </include>
     </group>
 
-    <!-- Error Monitor -->
+    <!-- MRM Operator -->
     <group>
+      <include file="$(find-pkg-share mrm_comfortable_stop_operator)/launch/mrm_comfortable_stop_operator.launch.py">
+        <arg name="config_file" value="$(var mrm_comfortable_stop_operator_param_path)"/>
+      </include>
+    </group>
+    <group>
+      <include file="$(find-pkg-share mrm_emergency_stop_operator)/launch/mrm_emergency_stop_operator.launch.py">
+        <arg name="config_file" value="$(var mrm_emergency_stop_operator_param_path)"/>
+      </include>
+    </group>
+
+    <!-- Error Monitor -->
+    <group if="$(var use_emergency_handler)">
       <let name="config_file" value="$(var system_error_monitor_param_path)" if="$(eval &quot;'$(var run_mode)'=='online'&quot;)"/>
       <let name="config_file" value="$(var system_error_monitor_param_path)" if="$(eval &quot;'$(var run_mode)'=='logging_simulation'&quot;)"/>
       <let name="config_file" value="$(var system_error_monitor_planning_simulator_param_path)" if="$(eval &quot;'$(var run_mode)'=='planning_simulation'&quot;)"/>
@@ -79,27 +112,29 @@
     </group>
 
     <!-- Emergency Handler -->
-    <group>
+    <group if="$(var use_emergency_handler)">
       <include file="$(find-pkg-share emergency_handler)/launch/emergency_handler.launch.xml">
         <arg name="config_file" value="$(var emergency_handler_param_path)"/>
       </include>
     </group>
 
+    <!-- Diagnostic Graph Aggregator -->
     <group>
-      <include file="$(find-pkg-share duplicated_node_checker)/launch/duplicated_node_checker.launch.xml">
-        <arg name="config_file" value="$(var duplicated_node_checker_param_path)"/>
+      <include file="$(find-pkg-share system_diagnostic_monitor)/launch/system_diagnostic_monitor.launch.xml">
+        <arg name="param_file" value="$(var diagnostic_graph_aggregator_param_path)"/>
+        <arg name="graph_file" value="$(var diagnostic_graph_aggregator_graph_path)"/>
       </include>
     </group>
 
-    <!-- MRM Operator -->
-    <group>
-      <include file="$(find-pkg-share mrm_comfortable_stop_operator)/launch/mrm_comfortable_stop_operator.launch.py">
-        <arg name="config_file" value="$(var mrm_comfortable_stop_operator_param_path)"/>
-      </include>
+    <!-- Hazard Status Converter -->
+    <group unless="$(var use_emergency_handler)">
+      <include file="$(find-pkg-share hazard_status_converter)/launch/hazard_status_converter.launch.xml"/>
     </group>
-    <group>
-      <include file="$(find-pkg-share mrm_emergency_stop_operator)/launch/mrm_emergency_stop_operator.launch.py">
-        <arg name="config_file" value="$(var mrm_emergency_stop_operator_param_path)"/>
+
+    <!-- MRM Handler -->
+    <group unless="$(var use_emergency_handler)">
+      <include file="$(find-pkg-share mrm_handler)/launch/mrm_handler.launch.xml">
+        <arg name="config_file" value="$(var mrm_handler_param_path)"/>
       </include>
     </group>
   </group>

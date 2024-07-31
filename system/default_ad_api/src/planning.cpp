@@ -14,7 +14,7 @@
 
 #include "planning.hpp"
 
-#include <motion_utils/trajectory/trajectory.hpp>
+#include <autoware/motion_utils/trajectory/trajectory.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/planning_behavior.hpp>
 
@@ -74,6 +74,7 @@ PlanningNode::PlanningNode(const rclcpp::NodeOptions & options) : Node("planning
     "/planning/velocity_factors/blind_spot",
     "/planning/velocity_factors/crosswalk",
     "/planning/velocity_factors/detection_area",
+    "/planning/velocity_factors/dynamic_obstacle_stop",
     "/planning/velocity_factors/intersection",
     "/planning/velocity_factors/merge_from_private",
     "/planning/velocity_factors/no_stopping_area",
@@ -84,7 +85,8 @@ PlanningNode::PlanningNode(const rclcpp::NodeOptions & options) : Node("planning
     "/planning/velocity_factors/surround_obstacle",
     "/planning/velocity_factors/traffic_light",
     "/planning/velocity_factors/virtual_traffic_light",
-    "/planning/velocity_factors/walkway"};
+    "/planning/velocity_factors/walkway",
+    "/planning/velocity_factors/motion_velocity_planner"};
 
   std::vector<std::string> steering_factor_topics = {
     "/planning/steering_factor/avoidance", "/planning/steering_factor/intersection",
@@ -134,7 +136,8 @@ void PlanningNode::on_timer()
         const auto & curr_point = kinematic_state_->pose.pose.position;
         const auto & stop_point = factor.pose.position;
         const auto & points = trajectory_->points;
-        factor.distance = motion_utils::calcSignedArcLength(points, curr_point, stop_point);
+        factor.distance =
+          autoware::motion_utils::calcSignedArcLength(points, curr_point, stop_point);
       }
     }
   }
