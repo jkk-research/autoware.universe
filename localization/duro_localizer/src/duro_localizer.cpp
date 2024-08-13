@@ -22,7 +22,7 @@ DuroLocalizer::DuroLocalizer() : Node("duro_localizer")
 
     // Initialize subscribers
     sub_pose_     = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/lexus3/gps/duro/current_pose_with_cov", 1, std::bind(&DuroLocalizer::pose_callback, this, std::placeholders::_1));
-    sub_velocity_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>("/vehicle/status/velocity_status", 1, std::bind(&DuroLocalizer::velocity_callback, this, std::placeholders::_1));
+    sub_velocity_ = this->create_subscription<autoware_vehicle_msgs::msg::VelocityReport>("/vehicle/status/velocity_status", 1, std::bind(&DuroLocalizer::velocity_callback, this, std::placeholders::_1));
 
     // Initialize tf broadcaster
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
@@ -89,7 +89,7 @@ void DuroLocalizer::pose_callback(const std::shared_ptr<const geometry_msgs::msg
     tf_broadcaster_->sendTransform(tf);
 }
 
-void DuroLocalizer::velocity_callback(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::VelocityReport>& msg_)
+void DuroLocalizer::velocity_callback(const std::shared_ptr<const autoware_vehicle_msgs::msg::VelocityReport>& msg_)
 {
     // Publish acceleration
     geometry_msgs::msg::AccelWithCovarianceStamped accel;

@@ -8,7 +8,7 @@
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include <autoware_adapi_v1_msgs/msg/localization_initialization_state.hpp>
 #include <geometry_msgs/msg/accel_with_covariance_stamped.hpp>
-#include <autoware_auto_vehicle_msgs/msg/velocity_report.hpp>
+#include <autoware_vehicle_msgs/msg/velocity_report.hpp>
 
 #include <functional>
 #include <memory>
@@ -26,14 +26,14 @@ class DuroLocalizer : public rclcpp::Node
         rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pub_init_pose_;
 
         rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr sub_pose_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr sub_velocity_;
+        rclcpp::Subscription<autoware_vehicle_msgs::msg::VelocityReport>::SharedPtr sub_velocity_;
 
         double gpsOffsetX;
         double gpsOffsetY;
         double gpsOffsetZ;
 
         void pose_callback(const std::shared_ptr<const geometry_msgs::msg::PoseWithCovarianceStamped>& msg_);
-        void velocity_callback(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::VelocityReport>& msg_);
+        void velocity_callback(const std::shared_ptr<const autoware_vehicle_msgs::msg::VelocityReport>& msg_);
 };
 
 #endif // DURO_LOCALIZER__DURO_LOCALIZER_HPP_

@@ -12,7 +12,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(autoware_adapi_v1_msgs REQUIRED)
-find_package(autoware_auto_vehicle_msgs REQUIRED)
+find_package(autoware_vehicle_msgs REQUIRED)
 
 include_directories(
   include
@@ -26,7 +26,7 @@ ament_target_dependencies(
   tf2
   tf2_ros
   autoware_adapi_v1_msgs
-  autoware_auto_vehicle_msgs
+  autoware_vehicle_msgs
 )
 
 install(TARGETS
