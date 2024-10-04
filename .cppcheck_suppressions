@@ -1,17 +1,9 @@
 *:*/test/*
 
 checkersReport
-functionConst
-functionStatic
 missingInclude
 missingIncludeSystem
-noConstructor
-unknownMacro
 unmatchedSuppression
-unreadVariable
 unusedFunction
-unusedStructMember
 useInitializationList
 useStlAlgorithm
-variableScope
-virtualCallInConstructor
