@@ -19,6 +19,7 @@
 #include "autoware/lidar_centerpoint/preprocess/preprocess_kernel.hpp"
 
 #include <autoware/universe_utils/math/constants.hpp>
+#include <autoware/universe_utils/ros/diagnostics_interface.hpp>
 
 #include <algorithm>
 #include <cstdlib>
@@ -127,22 +128,38 @@ void CenterPointTRT::initPtr()
 
 bool CenterPointTRT::detect(
   const sensor_msgs::msg::PointCloud2 & input_pointcloud_msg, const tf2_ros::Buffer & tf_buffer,
-  std::vector<Box3D> & det_boxes3d)
+  std::vector<Box3D> & det_boxes3d, bool & is_num_pillars_within_range)
 {
+  is_num_pillars_within_range = true;
+
   CHECK_CUDA_ERROR(cudaMemsetAsync(
     encoder_in_features_d_.get(), 0, encoder_in_feature_size_ * sizeof(float), stream_));
   CHECK_CUDA_ERROR(
     cudaMemsetAsync(spatial_features_d_.get(), 0, spatial_features_size_ * sizeof(float), stream_));
 
   if (!preprocess(input_pointcloud_msg, tf_buffer)) {
-    RCLCPP_WARN_STREAM(
-      rclcpp::get_logger("lidar_centerpoint"), "Fail to preprocess and skip to detect.");
+    RCLCPP_WARN(rclcpp::get_logger("lidar_centerpoint"), "Fail to preprocess and skip to detect.");
     return false;
   }
 
   inference();
 
   postProcess(det_boxes3d);
+
+  // Check the actual number of pillars after inference to avoid unnecessary synchronization.
+  unsigned int num_pillars = 0;
+  CHECK_CUDA_ERROR(
+    cudaMemcpy(&num_pillars, num_voxels_d_.get(), sizeof(unsigned int), cudaMemcpyDeviceToHost));
+
+  if (num_pillars >= config_.max_voxel_size_) {
+    rclcpp::Clock clock{RCL_ROS_TIME};
+    RCLCPP_WARN_THROTTLE(
+      rclcpp::get_logger("lidar_centerpoint"), clock, 1000,
+      "The actual number of pillars (%u) exceeds its maximum value (%zu). "
+      "Please considering increasing it since it may limit the detection performance.",
+      num_pillars, config_.max_voxel_size_);
+    is_num_pillars_within_range = false;
+  }
 
   return true;
 }
